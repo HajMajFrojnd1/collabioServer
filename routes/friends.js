@@ -87,6 +87,7 @@ router.delete("/friendRequests", async (req, res) => {
 
 });
 
+//accept friend
 router.post("/friendRequests", async (req, res) => {
 
     const {requestId} = req.body;
@@ -105,7 +106,11 @@ router.post("/friendRequests", async (req, res) => {
         friendRequest.accepted = true;
         friendRequest.save();
 
-        return res.status(200).send({message: "Friend request successfully accepted"});
+        return res.status(200).send({
+            message: "Friend request successfully accepted",
+            friendRequest: friendRequest
+        });
+        
     } catch (error) {
         return res.status(500).send({message:"Server error"});
     }
