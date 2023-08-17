@@ -3,11 +3,13 @@ const mongoose = require('mongoose');
 const FriendRequestSchema = mongoose.Schema({
     fromUser: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: "User"
     },
     toUser: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: "User"
     },
     timestamp:{
         type: Date,

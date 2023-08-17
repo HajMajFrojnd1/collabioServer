@@ -8,7 +8,8 @@ module.exports = async (user) => {
 
         const payload = {
             id: user._id,
-            email: user.email
+            email: user.email,
+            fullName: user.firstName + " " + user.lastName
         };
     
         const acessToken = jwt.sign(
