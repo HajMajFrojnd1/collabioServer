@@ -148,7 +148,8 @@ router.post("/refreshToken", async (req, res) => {
     
         const payload = {
             id: details.id,
-            email: details.email
+            email: details.email,
+            fullName: details.fullName
         }
     
         const acessToken = jwt.sign(

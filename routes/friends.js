@@ -89,7 +89,7 @@ router.post("/friendRequests", async (req, res) => {
     }
 
     try {
-        const friendRequest = await FriendRequest.findById(requestId).populate("fromUser", "email").populate("toUser", "email");
+        const friendRequest = await FriendRequest.findById(requestId).populate("fromUser", "email firstName lastName").populate("toUser", "email firstName lastName");
 
         if(friendRequest.fromUser._id === user.id){
             return res.status(400).send({message: "You cant accept request created by yourself"});

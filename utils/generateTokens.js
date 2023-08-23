@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const UserToken = require("../models/userToken");
-const serialize = require("cookie").serialize;
 
 module.exports = async (user) => {
 
