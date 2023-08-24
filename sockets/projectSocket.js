@@ -1,4 +1,5 @@
 const verifyTokenSocket = require("../token-auth/auth").verifyTokenSocket;
+const FileObjectType = require("../enums/fileObjectType");
 const FileObject = require("../models/fileObject");
 const Project = require("../models/project");
 //returns parent namespace of project namespace
@@ -12,15 +13,17 @@ const registerProjectSocket = (io) => {
 
     parentNamespace.on("connection", async (socket) => {
         const namespace = socket.nsp;
+        const projectId = namespace.name.split("/")[3];
+        
         console.log("User: " + socket.user.email + " connected to namespace " + namespace.name);
 
         
         if(!fileTrees[namespace.name]){
             try {
-                const namespaceProject = await Project.findById(namespace.name.split("/")[3]);
+                const namespaceProject = await Project.findById(projectId);
                 const projectFileTree = await FileObject.find({project: namespaceProject._id});
-                fileTrees[namespace.name] = projectFileTree;
-                socket.emit("fileTree", projectFileTree);
+                fileTrees[projectId] = projectFileTree;
+                socket.emit("fileTree", projectFileTree.map(fileObject =>fileObject.path));
             } catch (error) {
                 console.log(error);
             }
@@ -38,13 +41,12 @@ const registerProjectSocket = (io) => {
             });
 
             if(!namespace.sockets.size){
-                delete fileTrees[namespace.name];
+                delete fileTrees[projectId];
             }
 
         });
 
         socket.on("chatMessage", (message) => {
-            console.log(message);
             socket.broadcast.emit("chatMessage", {
                 user: socket.user,
                 message: message,
@@ -52,7 +54,28 @@ const registerProjectSocket = (io) => {
             });
         });
 
+        socket.on("fileTree", async (change) => {
+            try {
+                if(change.type === FileObjectType.remove){
 
+                }else{
+
+                    const fileObject = new FileObject({
+                        path: change.path,
+                        type: change.type,
+                        project: projectId
+                    });
+
+                    await fileObject.save();
+
+                    fileTrees[projectId].push(fileObject);
+                    socket.broadcast.emit("fileTree", fileTrees[projectId].map(fileObject => fileObject.path));
+
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        });
 
     });
 

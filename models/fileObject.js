@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const FileObjectType = require("../enums/fileObjectType");
 
 const FileObjectSchema = new mongoose.Schema({
     path: {
@@ -8,7 +9,7 @@ const FileObjectSchema = new mongoose.Schema({
     type: {
         type: Number,
         required: true,
-        enum: [0,1]
+        enum: [FileObjectType.directory,FileObjectType.file]
     },
     project: {
         type: mongoose.Schema.Types.ObjectId,
